@@ -9,9 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.myapplication.data.model.Story
-import com.example.myapplication.ui.components.ErrorMessage
-import com.example.myapplication.ui.components.LoadingIndicator
-import com.example.myapplication.ui.components.StoryItem
+import com.example.myapplication.ui.components.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -51,51 +49,27 @@ fun NewsListScreen(
             }
         }
         
-        // Content
-        Box(modifier = Modifier.fillMaxSize()) {
-            when {
-                uiState.isLoading -> {
-                    LoadingIndicator(
-                        modifier = Modifier.fillMaxWidth().padding(32.dp)
-                    )
-                }
-                
-                uiState.error != null -> {
-                    ErrorMessage(
-                        message = uiState.error!!,
-                        onRetry = { viewModel.refreshStories() },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
-                
-                uiState.stories.isEmpty() -> {
-                    Column(
-                        modifier = Modifier.fillMaxWidth().padding(32.dp),
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        Text(
-                            text = "No stories available",
-                            style = MaterialTheme.typography.headlineSmall,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                    }
-                }
-                
-                else -> {
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
-                        contentPadding = PaddingValues(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        items(uiState.stories) { story ->
-                            StoryItem(
-                                story = story,
-                                onStoryClick = onStoryClick
-                            )
-                        }
-                    }
-                }
-            }
+        // Content with optimized components
+        OptimizedNewsList(
+            stories = uiState.stories,
+            isLoading = uiState.isLoading,
+            error = uiState.error,
+            onRefresh = { viewModel.refreshStories() },
+            onStoryClick = onStoryClick,
+            modifier = Modifier.fillMaxSize()
+        )
+    }
+}
+
+@Composable
+fun LoadingShimmerList() {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        items(10) {
+            StoryShimmer()
         }
     }
 }
