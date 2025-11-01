@@ -17,6 +17,16 @@ val HackerBlack = Color(0xFF0A0A0A)  // 黑客黑色
 val CodeGrey = Color(0xFF1E1E1E)     // 代码灰色
 val AccentGreen = Color(0xFF39FF14)  // 强调绿色
 
+// Hacker 颜色对象（向后兼容）
+object HackerColors {
+    val Green = HackerGreen
+    val DarkGreen = MatrixGreen
+    val Black = HackerBlack
+    val Grey = CodeGrey
+    val Blue = CyberBlue
+    val Purple = NeonPurple
+}
+
 // 黑客风格深色主题
 val HackerDarkColorScheme = darkColorScheme(
     primary = HackerGreen,

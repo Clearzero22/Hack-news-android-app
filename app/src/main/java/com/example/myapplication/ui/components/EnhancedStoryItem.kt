@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -17,6 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.input.pointer.pointerInput
 import coil.compose.AsyncImage
 import com.example.myapplication.data.model.Story
 
@@ -25,6 +27,8 @@ import com.example.myapplication.data.model.Story
 fun EnhancedStoryItem(
     story: Story,
     onStoryClick: (Story) -> Unit,
+    onLongPress: (Story) -> Unit = {},
+    isFavorite: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     var isBookmarked by remember { mutableStateOf(false) }
@@ -33,7 +37,12 @@ fun EnhancedStoryItem(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(12.dp))
-            .clickable { onStoryClick(story) },
+            .pointerInput(story) {
+                detectTapGestures(
+                    onTap = { onStoryClick(story) },
+                    onLongPress = { onLongPress(story) }
+                )
+            },
         elevation = CardDefaults.cardElevation(
             defaultElevation = 3.dp
         ),

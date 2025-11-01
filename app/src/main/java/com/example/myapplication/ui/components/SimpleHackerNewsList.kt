@@ -22,6 +22,7 @@ fun SimpleHackerNewsList(
     error: String?,
     onRefresh: () -> Unit,
     onStoryClick: (Story) -> Unit,
+    onStoryLongPress: (Story) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     SwipeRefresh(
@@ -132,7 +133,8 @@ fun SimpleHackerNewsList(
                     ) { story ->
                         SimpleHackerStoryItem(
                             story = story,
-                            onStoryClick = onStoryClick
+                            onStoryClick = onStoryClick,
+                            onLongPress = onStoryLongPress
                         )
                     }
                 }

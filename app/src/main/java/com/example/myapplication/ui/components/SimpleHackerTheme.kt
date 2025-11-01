@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -16,6 +17,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.input.pointer.pointerInput
 import com.example.myapplication.data.model.Story
 
 // 简化的黑客风格颜色
@@ -34,6 +36,7 @@ object HackerColors {
 fun SimpleHackerStoryItem(
     story: Story,
     onStoryClick: (Story) -> Unit,
+    onLongPress: (Story) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     // 闪烁动画
@@ -52,7 +55,12 @@ fun SimpleHackerStoryItem(
             .fillMaxWidth()
             .clip(RoundedCornerShape(8.dp))
             .background(HackerColors.Grey)
-            .clickable { onStoryClick(story) },
+            .pointerInput(story) {
+                detectTapGestures(
+                    onTap = { onStoryClick(story) },
+                    onLongPress = { onLongPress(story) }
+                )
+            },
         colors = CardDefaults.cardColors(
             containerColor = HackerColors.Grey
         ),

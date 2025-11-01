@@ -17,9 +17,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.myapplication.data.model.Story
+import com.example.myapplication.data.model.Favorite
 import com.example.myapplication.ui.screens.NewsListScreen
 import com.example.myapplication.ui.screens.StoryDetailScreen
 import com.example.myapplication.ui.screens.EnhancedStoryDetailScreen
+import com.example.myapplication.ui.screens.FavoritesScreen
 import com.example.myapplication.ui.theme.HackerTheme
 import com.example.myapplication.ui.components.SimpleHackerBackground
 
@@ -53,6 +55,19 @@ fun HackerNewsApp() {
                 NewsListScreen(
                     onStoryClick = { story ->
                         navController.navigate("story_detail/${story.id}")
+                    },
+                    onFavoritesClick = {
+                        navController.navigate("favorites")
+                    }
+                )
+            }
+            
+            composable("favorites") {
+                FavoritesScreen(
+                    onBackClick = { navController.popBackStack() },
+                    onStoryClick = { favorite ->
+                        // 收藏列表点击时跳转到新闻详情页
+                        navController.navigate("story_detail/${favorite.id}")
                     }
                 )
             }
