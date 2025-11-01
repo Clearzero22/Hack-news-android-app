@@ -49,7 +49,7 @@ fun NewsListScreen(
             }
         }
         
-        // Content with simplified hacker style components
+        // Content with optimized components
         SimpleHackerNewsList(
             stories = uiState.stories,
             isLoading = uiState.isLoading,
