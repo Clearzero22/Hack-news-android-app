@@ -19,6 +19,7 @@ import androidx.navigation.navArgument
 import com.example.myapplication.data.model.Story
 import com.example.myapplication.ui.screens.NewsListScreen
 import com.example.myapplication.ui.screens.StoryDetailScreen
+import com.example.myapplication.ui.screens.EnhancedStoryDetailScreen
 import com.example.myapplication.ui.theme.HackerTheme
 import com.example.myapplication.ui.components.SimpleHackerBackground
 
@@ -62,15 +63,8 @@ fun HackerNewsApp() {
             ) { backStackEntry ->
                 val storyId = backStackEntry.arguments?.getInt("storyId") ?: return@composable
                 
-                StoryDetailScreen(
-                    story = Story(
-                        id = storyId,
-                        title = "Loading...",
-                        author = "",
-                        score = 0,
-                        timestamp = System.currentTimeMillis() / 1000,
-                        descendants = 0
-                    ),
+                EnhancedStoryDetailScreen(
+                    storyId = storyId,
                     onBackClick = { navController.popBackStack() },
                     onOpenUrl = { url ->
                         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))

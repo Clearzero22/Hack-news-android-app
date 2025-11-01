@@ -71,6 +71,9 @@ dependencies {
     implementation("com.google.accompanist:accompanist-swiperefresh:0.32.0")  // 下拉刷新
     implementation("com.valentinilk.shimmer:compose-shimmer:1.2.0")  // 骨架屏
     implementation("com.airbnb.android:lottie-compose:6.1.0")  // 动画
+    
+    // WebView for in-app browsing
+    implementation("androidx.webkit:webkit:1.8.0")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
