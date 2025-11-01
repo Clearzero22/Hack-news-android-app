@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -22,6 +23,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.myapplication.data.model.Favorite
 import com.example.myapplication.ui.theme.HackerColors
 import com.example.myapplication.ui.viewmodels.FavoriteViewModel
+import com.example.myapplication.utils.CsvExporter
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -32,7 +34,12 @@ fun FavoritesScreen(
     onStoryClick: (Favorite) -> Unit,
     viewModel: FavoriteViewModel = viewModel()
 ) {
+    val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
+    
+    // 导出状态
+    var isExporting by remember { mutableStateOf(false) }
+    var exportMessage by remember { mutableStateOf<String?>(null) }
     
     Box(
         modifier = Modifier
@@ -62,13 +69,38 @@ fun FavoritesScreen(
                 actions = {
                     if (uiState.favorites.isNotEmpty()) {
                         IconButton(
-                            onClick = { /* TODO: 导出功能 */ }
+                            onClick = {
+                                isExporting = true
+                                CsvExporter.exportFavoritesToCsv(
+                                    context = context,
+                                    favorites = uiState.favorites,
+                                    onSuccess = { csvFile ->
+                                        isExporting = false
+                                        exportMessage = "Export successful: ${csvFile.name}"
+                                        // 自动分享导出的文件
+                                        CsvExporter.shareCsvFile(context, csvFile)
+                                    },
+                                    onError = { error ->
+                                        isExporting = false
+                                        exportMessage = error
+                                    }
+                                )
+                            },
+                            enabled = !isExporting
                         ) {
-                            Icon(
-                                Icons.Default.Share,
-                                contentDescription = "Export",
-                                tint = HackerColors.Green
-                            )
+                            if (isExporting) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(20.dp),
+                                    color = HackerColors.Green,
+                                    strokeWidth = 2.dp
+                                )
+                            } else {
+                                Icon(
+                                    Icons.Default.Share,
+                                    contentDescription = "Export",
+                                    tint = HackerColors.Green
+                                )
+                            }
                         }
                     }
                 },
@@ -102,6 +134,50 @@ fun FavoritesScreen(
             LaunchedEffect(error) {
                 // TODO: Show error message
                 viewModel.clearError()
+            }
+        }
+        
+        // Export Message Snackbar
+        exportMessage?.let { message ->
+            LaunchedEffect(message) {
+                // 这里可以显示 Toast 或 Snackbar
+                kotlinx.coroutines.delay(3000)
+                exportMessage = null
+            }
+        }
+        
+        // 导出进度提示
+        if (isExporting) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                contentAlignment = Alignment.BottomCenter
+            ) {
+                Card(
+                    colors = CardDefaults.cardColors(
+                        containerColor = HackerColors.Grey
+                    ),
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(20.dp),
+                            color = HackerColors.Green,
+                            strokeWidth = 2.dp
+                        )
+                        Text(
+                            text = "Exporting favorites...",
+                            color = HackerColors.Green,
+                            fontFamily = FontFamily.Monospace,
+                            fontSize = 14.sp
+                        )
+                    }
+                }
             }
         }
     }
